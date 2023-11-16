@@ -10,8 +10,8 @@ def evaluateTree(root, x):
         return float(root.value)
     
     # evaluate subtrees
-    leftSubtree = evaluateTree(root.left)
-    rightSubtree = evaluateTree(root.right)
+    leftSubtree = evaluateTree(root.left, x)
+    rightSubtree = evaluateTree(root.right, x)
     
     if root.value == '+':
         return leftSubtree + rightSubtree

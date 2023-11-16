@@ -32,7 +32,6 @@ def infix_to_prefix(infix):
                 lastIsNum = False
                 tokenUsed = True
             else:
-                #numberAdded = False
                 tokenUsed = False
             
         if tokenUsed is False:
