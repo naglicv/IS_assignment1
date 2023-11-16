@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import infixToPrefix as itp
+import re
 
-
+#ustvari strukturo node (vozlišče) drevesa
 class Node:
     def __init__(self, value):
         self.value = value
@@ -14,13 +15,9 @@ class Node:
         self.right = None
 
 def gradi_drevo(expression):
-    if expression[0] == '*' and expression[1] == '*':
-        root = Node('**')
-        expression.pop(0)
-    else:
-        root = Node(expression[0])
+    root = Node(expression[0])
     expression.pop(0)
-    if root.value.isnumeric() or root.value.isalpha():
+    if root.value.lstrip('-+').isnumeric() or root.value.lstrip('-+').isalpha():
         return root
 
     root.left = gradi_drevo(expression)
@@ -33,9 +30,3 @@ def printTree(root):
         print(root.value, end = "")
         printTree(root.left)
         printTree(root.right)
-        
-
-sss = "((x+y)**z)/w+u"
-drevo = gradi_drevo(itp.infix_to_prefix(sss))
-
-printTree(drevo)
