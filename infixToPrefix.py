@@ -18,7 +18,6 @@ def infix_to_prefix(infix):
 
     lastToken = ''
     lastIsNum = False
-    tokenUsed = False
     stack = []
     output = []
     for token in reversed(infix):
