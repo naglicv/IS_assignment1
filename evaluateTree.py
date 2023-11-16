@@ -18,5 +18,5 @@ def evaluateTree(root):
     if root.value == '/':
         return leftSubtree / rightSubtree
     if root.value == '**':
-        return leftSubtree ** rightSubtree
+        return pow(leftSubtree, rightSubtree)
     return "Something went wrong"
