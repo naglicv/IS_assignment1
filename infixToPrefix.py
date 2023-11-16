@@ -36,12 +36,12 @@ def infix_to_prefix(infix):
                 tokenUsed = False
             
         if tokenUsed is False:
+            if lastIsNum is True:
+                output.append(lastToken)
+                lastIsNum = False
             if token == ' ':
                 continue
             if is_operator(token):
-                if lastIsNum is True:
-                    output.append(lastToken)
-                    lastIsNum = False
                 while stack and precedence(token) < precedence(stack[-1]):
                     output.append(stack.pop())
                 stack.append(token)
