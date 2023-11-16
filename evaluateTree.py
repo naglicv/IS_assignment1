@@ -9,14 +9,14 @@ def evaluateTree(root):
     leftSubtree = evaluateTree(root.left)
     rightSubtree = evaluateTree(root.right)
     
-    if root == '+':
+    if root.value == '+':
         return leftSubtree + rightSubtree
-    if root == '-':
+    if root.value == '-':
         return leftSubtree - rightSubtree
-    if root == '*':
+    if root.value == '*':
         return leftSubtree * rightSubtree
-    if root == '/':
+    if root.value == '/':
         return leftSubtree / rightSubtree
-    if root == '**':
+    if root.value == '**':
         return leftSubtree ** rightSubtree
     return "Something went wrong"
