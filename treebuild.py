@@ -14,11 +14,7 @@ class Node:
         self.right = None
 
 def gradi_drevo(expression):
-    if expression[0] == '*' and expression[1] == '*':
-        root = Node('**')
-        expression.pop(0)
-    else:
-        root = Node(expression[0])
+    root = Node(expression[0])
     expression.pop(0)
     if root.value.isnumeric() or root.value.isalpha():
         return root
