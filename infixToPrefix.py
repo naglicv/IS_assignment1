@@ -8,13 +8,13 @@ def infix_to_prefix(infix):
             return 1
         if op in ['*', '/']:
             return 2
-        if op in ['**']:
+        if op in ['^']:
             return 3
         return 0
 
     def is_operator(op):
         # Returns true if the operator is an operator
-        return op in ['+', '-', '*', '/', '**']
+        return op in ['+', '-', '*', '/', '^']
 
     stack = []
     output = []
