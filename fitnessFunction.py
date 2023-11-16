@@ -4,7 +4,6 @@ import pandas as pd
 
 def plot(expressions):
     # input:    expressions -> expressions in list format
-    #                   xs  -> x values in database
     
     lengths = np.zeros_like(expressions)
     for i, expression in enumerate(expressions):
