@@ -4,6 +4,7 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import infixToPrefix as itp
 
 
 class Node:
@@ -13,7 +14,11 @@ class Node:
         self.right = None
 
 def gradi_drevo(expression):
-    root = Node(expression[0])
+    if expression[0] == '*' and expression[1] == '*':
+        root = Node('**')
+        expression.pop(0)
+    else:
+        root = Node(expression[0])
     expression.pop(0)
     if root.value.isnumeric() or root.value.isalpha():
         return root
@@ -25,10 +30,12 @@ def gradi_drevo(expression):
 
 def printTree(root):
     if (root != None):
+        print(root.value, end = "")
         printTree(root.left)
         printTree(root.right)
-        print(root.value, end = "")
+        
 
-drevo = gradi_drevo(['-','+','2','*','3','4','5'])
+sss = "((x+y)**z)/w+u"
+drevo = gradi_drevo(itp.infix_to_prefix(sss))
 
 printTree(drevo)
