@@ -30,3 +30,11 @@ def printTree(root):
         print(root.value, end = "")
         printTree(root.left)
         printTree(root.right)
+
+def countTree(root):
+    count = 0
+    if root != None:
+        count += 1
+        count += countTree(root.left)
+        count += countTree(root.right)
+    return count
