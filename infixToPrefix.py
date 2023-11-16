@@ -32,12 +32,16 @@ def infix_to_prefix(infix):
                 lastIsNum = False
                 tokenUsed = True
             else:
+                #numberAdded = False
                 tokenUsed = False
             
         if tokenUsed is False:
             if token == ' ':
                 continue
             if is_operator(token):
+                if lastIsNum is True:
+                    output.append(lastToken)
+                    lastIsNum = False
                 while stack and precedence(token) < precedence(stack[-1]):
                     output.append(stack.pop())
                 stack.append(token)
@@ -58,5 +62,5 @@ def infix_to_prefix(infix):
     return output
 
 if __name__ == '__main__':
-    s = "((x + y) ** -z) / w + +u"
+    s = "((x + y)**-z)/w + +u"
     print(infix_to_prefix(s))
