@@ -20,7 +20,7 @@ import evaluateTree as eval
 
 data = pd.read_csv("./datasets/dataset.csv", sep=",")
 equations = data['Equation']
-Xs = data['Xs']
+Xs = list(data['Xs'])
 Ys = data['Ys']
 
 
@@ -33,11 +33,15 @@ print('\n')
 print(eval.evaluateTree(drevo, 2))'''
 
 
-for equation in equations:
-    print(equation + ':')
-    eq = i2p.infix_to_prefix(equation)
+for i,x_vrstica in enumerate(Xs):
+    eq = i2p.infix_to_prefix(equations[i])
     drevo = tb.gradi_drevo(eq)
     tb.printTree(drevo)
+    x_list = x_vrstica.strip('][').split(', ')
+    y_list = Ys[i].strip('][').split(', ')
+    for j,x in enumerate(x_list):
+        print(x)
+        print(eval.evaluateTree(drevo, x_list[j]))
     print('\n')
 
 
