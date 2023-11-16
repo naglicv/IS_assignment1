@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import infixToPrefix as itp
+import re
 
-
+#ustvari strukturo node (vozlišče) drevesa
 class Node:
     def __init__(self, value):
         self.value = value
@@ -16,7 +17,7 @@ class Node:
 def gradi_drevo(expression):
     root = Node(expression[0])
     expression.pop(0)
-    if root.value.isnumeric() or root.value.isalpha():
+    if root.value.lstrip('-+').isnumeric() or root.value.lstrip('-+').isalpha():
         return root
 
     root.left = gradi_drevo(expression)
