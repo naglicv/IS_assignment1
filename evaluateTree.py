@@ -1,9 +1,9 @@
 def evaluateTree(root):
     # Empty tree
     if root is None:
-        return 0
+        return 0.0
     if root.left is None and root.right is None:
-        return root.value
+        return float(root.value)
     
     # evaluate subtrees
     leftSubtree = evaluateTree(root.left)
@@ -17,6 +17,6 @@ def evaluateTree(root):
         return leftSubtree * rightSubtree
     if root.value == '/':
         return leftSubtree / rightSubtree
-    if root.value == '**':
+    if root.value == '^':
         return pow(leftSubtree, rightSubtree)
     return "Something went wrong"
