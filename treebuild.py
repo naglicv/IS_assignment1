@@ -33,9 +33,3 @@ def printTree(root):
         print(root.value, end = "")
         printTree(root.left)
         printTree(root.right)
-        
-
-sss = "((x+y)**z)/w+u"
-drevo = gradi_drevo(itp.infix_to_prefix(sss))
-
-printTree(drevo)
