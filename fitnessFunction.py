@@ -43,7 +43,7 @@ if __name__ == "__main__":
     equations = data['Equation']
     xs = data['Xs'][0].strip('][').split(', ')
     xs = np.array(xs)
-    fun_optimal_tree = gradi_drevo(infix_to_prefix(equations[0]))
-    fun_generated_tree = gradi_drevo(infix_to_prefix(equations[2]))
+    fun_optimal_tree = buildTree(infix_to_prefix(equations[0]))
+    fun_generated_tree = buildTree(infix_to_prefix(equations[2]))
 
     plot(fun_optimal_tree, fun_generated_tree, xs)

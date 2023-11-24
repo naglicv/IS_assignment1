@@ -73,29 +73,40 @@ def countTree(root):
     return count
 
 
-def poddrevo(node, target, index=1):
+def poddrevo_gen(node, target, index=1):
     if node is None:
         return None
     if index == target:
         return node
 
-    l_poddrevo = poddrevo(node.left, target, 2 * index)
-    d_poddrevo = poddrevo(node.right, target, 2 * index + 1)
+    l_poddrevo = poddrevo_gen(node.left, target, 2 * index)
+    d_poddrevo = poddrevo_gen(node.right, target, 2 * index + 1)
     return l_poddrevo or d_poddrevo
-
 
 
 def crossover(tree1, tree2):
     crossover_point = random.randint(1, min(countTree(tree1), countTree(tree2)))
 
-    poddrevo1 = poddrevo(tree1, crossover_point)
-    poddrevo2 = poddrevo(tree2, crossover_point)
+    poddrevo1 = poddrevo_gen(tree1, crossover_point)
+    poddrevo2 = poddrevo_gen(tree2, crossover_point)
 
     if poddrevo1 is not None and poddrevo2 is not None:
         poddrevo1.left, poddrevo2.left = poddrevo2.left, poddrevo1.left
         poddrevo1.right, poddrevo2.right = poddrevo2.right, poddrevo1.right
         poddrevo1.value, poddrevo2.value = poddrevo2.value, poddrevo1.value
-    
+
+
+def mutation(tree):
+    mutation_point = random.randint(1, countTree(tree))
+    operatorji = ['+', '-', '*', '/', '^']
+    poddrevo = poddrevo_gen(tree, mutation_point)
+    if poddrevo.value in operatorji:
+        poddrevo.value = operatorji[random.randint(0, len(operatorji))]
+    else:
+        operandi = list(range(-10,10))
+        operandi.extend(['x', '-x'])
+        poddrevo.value = operandi[random.randint(0, len(operandi))]
+
 
 
 '''X = []
