@@ -5,7 +5,6 @@ import pandas as pd
 from evaluateTree import evaluateTree
 from infixToPrefix import infix_to_prefix
 from treebuild import *
-from matplotlib.ticker import FuncFormatter
 
 def plot(fun_optimal_tree, fun_generated_tree, xs):
     
@@ -17,7 +16,11 @@ def plot(fun_optimal_tree, fun_generated_tree, xs):
         fun_optimal_values[i] = evaluateTree(fun_optimal_tree, x)
         fun_generated_values[i] = evaluateTree(fun_generated_tree, x)
 
-    fitness = np.power(np.subtract(fun_optimal_values, fun_generated_values), 2)
+    fitness = np.square(np.subtract(fun_generated_values,fun_optimal_values))
+    
+    # mean squared error
+    mean_sq_error = mse(fun_optimal_values, fun_generated_values)
+    print("mse: ", mean_sq_error)
     
     plt.figure(figsize=(15,9))
     plt.subplot(2,1,1)
@@ -36,6 +39,10 @@ def plot(fun_optimal_tree, fun_generated_tree, xs):
     for label in ax.get_xticklabels():
         label.set_fontsize(5)
     plt.show()
+    
+    
+def mse(actual_values, expected_values):
+    return np.square(np.subtract(actual_values,expected_values)).mean() 
     
     
 if __name__ == "__main__":
