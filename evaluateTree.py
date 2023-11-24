@@ -1,3 +1,5 @@
+const = 1000
+
 def evaluateTree(root, x):
     # Empty tree
     if root is None:
@@ -21,8 +23,7 @@ def evaluateTree(root, x):
     if root.value == '*':
         return leftSubtree * rightSubtree
     if root.value == '/':
-        const = 1.e-10
-        return (leftSubtree / rightSubtree) if rightSubtree > 0 else leftSubtree / const
+        return (leftSubtree / rightSubtree) if rightSubtree > 0 else const
     if root.value == '^':
-        return pow(leftSubtree, rightSubtree)
+        return pow(leftSubtree, rightSubtree) if leftSubtree > 0 else const
     return "Something went wrong"
