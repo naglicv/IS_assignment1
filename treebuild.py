@@ -19,6 +19,8 @@ class Node:
         self.left = None
         self.right = None
 
+
+#zgradi drevo na podlagi prefiksne oblike enačbe
 def buildTree(expression):
     root = Node(expression[0])
     expression.pop(0)
@@ -30,6 +32,8 @@ def buildTree(expression):
 
     return(root)
 
+
+#izpis drevesa
 def printTree(root):
     if (root != None):
         print(root.value, end = "")
@@ -39,6 +43,7 @@ def printTree(root):
         printTree(root.right)
 
 
+#generiraj random expression (tree value)
 def generateExpression(globina):
     rng = np.random.default_rng()
     operatorji = ['+', '-', '*', '/', '^']
@@ -54,6 +59,7 @@ def generateExpression(globina):
     return expression
 
 
+#generiraj random drevo
 def generateTree(globina):
     expression = generateExpression(globina)
     root = Node(expression)
@@ -64,6 +70,7 @@ def generateTree(globina):
     return root
 
 
+#preštej število vozlšč v drevesu
 def countTree(root):
     count = 0
     if root != None:
@@ -106,21 +113,3 @@ def mutation(tree):
         operandi = list(range(-10,10))
         operandi.extend(['x', '-x'])
         poddrevo.value = operandi[random.randint(0, len(operandi))]
-
-
-
-'''X = []
-
-for i in range(20):
-    drevo = generateTree(0)
-    X.append(drevo)
-
-for i in range(19):
-    crossover(X[i], X[i+1])
-
-for i in range(20):
-    try:
-        print(eval.evaluateTree(X[i], 10))
-    except:
-        print(1.e10)'''
-    
