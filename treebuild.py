@@ -67,7 +67,53 @@ def generateTree(globina):
     root.right = generateTree(globina+1)
     return root
 
+# pretvori drevo v array
+def treeToArray(root, array_length):
+    # Initialize the array with [0, 0]
+    arr = [[0, 0] for _ in range(array_length)]
+    
+    # List of operators
+    operators = ['+', '-', '*', '/', '^']
+    
+    # Helper function to recursively traverse the tree
+    def traverse(node, index):
+        if node is None:
+            index -= 1
+            return index
+        
+        if node.value.lstrip('-+').isnumeric():
+            # If the node is a number, store [0, number]
+            arr[index] = [0, int(node.value)]
+        elif node.value == 'x':
+            # If the node is 'x', store [2, x]
+            arr[index] = [2, 0]
+        elif node.value == '-x':
+            # If the node is '-x', store [2, -x]
+            arr[index] = [2, 1]
+        elif node.value in operators:
+            # If the node is an operator, store [1, index of operator]
+            arr[index] = [1, operators.index(node.value)]
+        
+        # Traverse the left and right children
+        index = traverse(node.left, index + 1)
+        index = traverse(node.right, index + 1)
+        
+        return index
+    
+    # Count the number of nodes and store it in the first element
+    num_nodes = traverse(root, 1)
+    arr[0] = [-1, num_nodes+1]
+    
+    print(arr)
+    return arr
 
+def isOperator(op):
+    # Returns true if the operator is an operator
+    if op in ['+', '-', '*', '/', '^']:
+        return 1
+    else:
+        return 0
+        
 #preštej število vozlšč v drevesu
 def countTree(root):
     count = 0
@@ -111,3 +157,11 @@ def mutation(tree):
         operandi = list(range(-10,10))
         operandi.extend(['x', '-x'])
         poddrevo.value = operandi[random.randint(0, len(operandi))]
+        
+if __name__ == '__main__':
+    globina = 4
+    for i in range(10):
+        tree = generateTree(globina)
+        printTree(tree)
+        print("\n")
+        treeToExpr(tree, 100)
