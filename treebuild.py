@@ -38,7 +38,7 @@ def printTree(root):
     string = ""
     if (root != None):
         string = root.value
-        print(root.value, end = " ")
+        print(root.value, end = "")
         string += printTree(root.left)
         string += printTree(root.right)
     return string
@@ -154,7 +154,7 @@ def crossover(arr1, arr2):
         poddrevo1.value, poddrevo2.value = poddrevo2.value, poddrevo1.value
 
 
-def mutation(arr):
+def mutation(arr, offspring):
     tree = arrayToTree(arr)
     mutation_point = random.randint(1, countTree(tree))
     operatorji = ['+', '-', '*', '/', '^']
@@ -165,21 +165,21 @@ def mutation(arr):
         operandi = list(range(-10,10))
         operandi.extend(['x', '-x'])
         poddrevo.value = operandi[random.randint(0, len(operandi))]
+    offspring = treeToArray(tree, 100)
 
 
 def arrayToTree(array):
     prefix = []
-    dolzina = array[0][1]
+    dolzina = array[1]
     operatorji = ['+', '-', '*', '/', '^']
     x = ['x', '-x']
-    for i in range(1, dolzina):
-        print(array[i][0])
-        if array[i][0] == 0:
-            prefix.append(str(array[i][1]))
-        elif array[i][0] == 1:
-            prefix.append(operatorji[array[i][1]])
-        elif array[i][0] == 2:
-            prefix.append(x[array[i][1]])
+    for i in range(2, 2*int(dolzina), 2):
+        if array[i] == 0:
+            prefix.append(str(array[i+1]))
+        elif array[i] == 1:
+            prefix.append(operatorji[array[i+1]])
+        elif array[i] == 2:
+            prefix.append(x[array[i+1]])
     return buildTree(prefix)
 
 if __name__ == '__main__':
