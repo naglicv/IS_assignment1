@@ -74,6 +74,7 @@ def generateTree(globina):
 def treeToArray(root, array_length):
     # Initialize the array with [0, 0]
     arr = [[0, 0] for _ in range(array_length)]
+    arr = np.array(arr)
     
     # List of operators
     operators = ['+', '-', '*', '/', '^']
@@ -107,6 +108,7 @@ def treeToArray(root, array_length):
     num_nodes = traverse(root, 1)
     arr[0] = [-1, num_nodes+1]
     
+    arr = arr.flatten()
     print(arr)
     return arr
 
@@ -181,16 +183,16 @@ def arrayToTree(array):
     return buildTree(prefix)
 
 if __name__ == '__main__':
-    #drevo = generateTree(0)
+    """#drevo = generateTree(0)
     #bbb = printTree(drevo)
     array = [[-1,4],[1,2],[2,1],[0,5]]
 
     kk = arrayToTree(array)
     printTree(kk)
-
+"""
     globina = 4
     for i in range(10):
         tree = generateTree(globina)
         printTree(tree)
         print("\n")
-        treeToExpr(tree, 100)
+        treeToArray(tree, 100)
