@@ -37,9 +37,7 @@ def buildTree(expression):
 def printTree(root):
     if (root != None):
         print(root.value, end = "")
-        print(end =" ")
         printTree(root.left)
-        print(end =" ")
         printTree(root.right)
 
 
