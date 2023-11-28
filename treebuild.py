@@ -50,10 +50,10 @@ def generateExpression(globina):
     operatorji = ['+', '-', '*', '/', '^']
     operandi = list(range(-10,10))
     spremenljivka = ['x', '-x']
-    rand = int(rng.random()*10) + (0.2 * globina)
+    rand = rng.random()*10 + (0.2 * globina)
     if rand <= 5:
         expression = operatorji[random.randint(0, 4)]
-    elif rand <= 7:
+    elif rand <= 7.5:
         expression = spremenljivka[random.randint(0, 1)]
     else:
         expression = str(operandi[random.randint(0, 18)])
@@ -121,26 +121,23 @@ def mutation(arr):
 
 def arrayToTree(array):
     prefix = []
-    dolzina = array[0][0]
+    dolzina = array[0][1]
     operatorji = ['+', '-', '*', '/', '^']
     x = ['x', '-x']
-    print(dolzina)
     for i in range(1, dolzina):
-        print(array[i][1])
-        if array[i][1] == 0:
-            prefix.append(str(array[i][0]))
-        elif array[i][1] == 1:
-            prefix.append(operatorji[array[i][0]])
-        elif array[i][1] == 2:
-            prefix.append(x[array[i][0]])
-
-    print(prefix)
+        print(array[i][0])
+        if array[i][0] == 0:
+            prefix.append(str(array[i][1]))
+        elif array[i][0] == 1:
+            prefix.append(operatorji[array[i][1]])
+        elif array[i][0] == 2:
+            prefix.append(x[array[i][1]])
     return buildTree(prefix)
 
 if __name__ == '__main__':
     #drevo = generateTree(0)
     #bbb = printTree(drevo)
-    array = [[4,-1],[2,1],[1,2],[-8,0], [5,0], [0,0]]
+    array = [[-1,4],[1,2],[2,1],[0,5]]
 
     kk = arrayToTree(array)
     printTree(kk)
