@@ -35,10 +35,13 @@ def buildTree(expression):
 
 #izpis drevesa
 def printTree(root):
+    string = ""
     if (root != None):
-        print(root.value, end = "")
-        printTree(root.left)
-        printTree(root.right)
+        string = root.value
+        print(root.value, end = " ")
+        string += printTree(root.left)
+        string += printTree(root.right)
+    return string
 
 
 #generiraj random expression (tree value)
@@ -49,11 +52,11 @@ def generateExpression(globina):
     spremenljivka = ['x', '-x']
     rand = int(rng.random()*10) + (0.2 * globina)
     if rand <= 5:
-        expression = operatorji[int(rng.random() * 5 - konstanta)]
+        expression = operatorji[random.randint(0, 4)]
     elif rand <= 7:
-        expression = spremenljivka[int(rng.random() * 2 - konstanta)]
+        expression = spremenljivka[random.randint(0, 1)]
     else:
-        expression = str(operandi[int(rng.random() * 19 - konstanta)])
+        expression = str(operandi[random.randint(0, 18)])
     return expression
 
 
@@ -89,7 +92,9 @@ def poddrevo_gen(node, target, index=1):
     return l_poddrevo or d_poddrevo
 
 
-def crossover(tree1, tree2):
+def crossover(arr1, arr2):
+    tree1 = arrayToTree(arr1)
+    tree2 = arrayToTree(arr2)
     crossover_point = random.randint(1, min(countTree(tree1), countTree(tree2)))
 
     poddrevo1 = poddrevo_gen(tree1, crossover_point)
@@ -101,7 +106,8 @@ def crossover(tree1, tree2):
         poddrevo1.value, poddrevo2.value = poddrevo2.value, poddrevo1.value
 
 
-def mutation(tree):
+def mutation(arr):
+    tree = arrayToTree(arr)
     mutation_point = random.randint(1, countTree(tree))
     operatorji = ['+', '-', '*', '/', '^']
     poddrevo = poddrevo_gen(tree, mutation_point)
@@ -111,3 +117,30 @@ def mutation(tree):
         operandi = list(range(-10,10))
         operandi.extend(['x', '-x'])
         poddrevo.value = operandi[random.randint(0, len(operandi))]
+
+
+def arrayToTree(array):
+    prefix = []
+    dolzina = array[0][0]
+    operatorji = ['+', '-', '*', '/', '^']
+    x = ['x', '-x']
+    print(dolzina)
+    for i in range(1, dolzina):
+        print(array[i][1])
+        if array[i][1] == 0:
+            prefix.append(str(array[i][0]))
+        elif array[i][1] == 1:
+            prefix.append(operatorji[array[i][0]])
+        elif array[i][1] == 2:
+            prefix.append(x[array[i][0]])
+
+    print(prefix)
+    return buildTree(prefix)
+
+if __name__ == '__main__':
+    #drevo = generateTree(0)
+    #bbb = printTree(drevo)
+    array = [[4,-1],[2,1],[1,2],[-8,0], [5,0], [0,0]]
+
+    kk = arrayToTree(array)
+    printTree(kk)
