@@ -10,6 +10,7 @@ import random
 import evaluateTree as eval
 import infixToPrefix as i2p
 
+
 konstanta = 1.e-10
 
 #ustvari strukturo node (vozlišče) drevesa
@@ -22,16 +23,25 @@ class Node:
 
 #zgradi drevo na podlagi prefiksne oblike enačbe
 def buildTree(expression):
-    root = Node(expression[0])
-    expression.pop(0)
-    if root.value.lstrip('-+').isnumeric() or root.value.lstrip('-+').isalpha():
-        return root
+    if len(expression) > 0:  # Check if there are elements in the list
+        root = Node(expression[0])
+        expression.pop(0)
+        if is_float(root.value) or root.value.lstrip('-+').isalpha():
+            return root
 
-    root.left = buildTree(expression)
-    root.right = buildTree(expression)
-
+        root.left = buildTree(expression)
+        root.right = buildTree(expression)
+    else:
+        root = None
+        
     return(root)
 
+def is_float(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
 
 #izpis drevesa
 def printTree(root):
@@ -61,13 +71,28 @@ def generateExpression(globina):
 
 
 #generiraj random drevo
-def generateTree(globina):
+"""def generateTree(globina):
     expression = generateExpression(globina)
     root = Node(expression)
     if root.value.lstrip('-+').isnumeric() or root.value.lstrip('-+').isalpha():
         return root
     root.left = generateTree(globina+1)
     root.right = generateTree(globina+1)
+    return root"""
+
+def generateTree(globina, is_root=True):
+    expression = generateExpression(globina)
+    # If the expression is empty and this is the root of the tree, create a node with a value of 0
+    if not expression and is_root:
+        return Node(0)
+    # If the expression is empty and this is not the root, return None
+    elif not expression:
+        return None
+    root = Node(expression)
+    if root.value.lstrip('-+').isnumeric() or root.value.lstrip('-+').isalpha():
+        return root
+    root.left = generateTree(globina+0.5, is_root=False) ############# change back to globina+1
+    root.right = generateTree(globina+0.5, is_root=False) ############# change back to globina+1
     return root
 
 # pretvori drevo v array
@@ -109,7 +134,7 @@ def treeToArray(root, array_length):
     arr[0] = [-1, num_nodes+1]
     
     arr = arr.flatten()
-    print(arr)
+    #print(arr)
     return arr
 
 def isOperator(op):
@@ -140,32 +165,58 @@ def poddrevo_gen(node, target, index=1):
     return l_poddrevo or d_poddrevo
 
 
-def crossover(arr1, arr2):
-    tree1 = arrayToTree(arr1)
-    tree2 = arrayToTree(arr2)
-    crossover_point = random.randint(1, min(countTree(tree1), countTree(tree2)))
+def crossover(parents, offspring_size, instance):
+    offspring = []
+    num_parents = len(parents)
+    while len(offspring) < offspring_size[0]:
+        # Select two parents
+        arr1 = parents[random.randint(0, num_parents-1)]
+        arr2 = parents[random.randint(0, num_parents-1)]
+        tree1 = arrayToTree(arr1)
+        tree2 = arrayToTree(arr2)
+        tree_count = min(countTree(tree1), countTree(tree2))
+        if tree_count > 1:
+            crossover_point = random.randint(1, tree_count)
+        else:
+            crossover_point = 1  # or some other default value
 
-    poddrevo1 = poddrevo_gen(tree1, crossover_point)
-    poddrevo2 = poddrevo_gen(tree2, crossover_point)
+        poddrevo1 = poddrevo_gen(tree1, crossover_point)
+        poddrevo2 = poddrevo_gen(tree2, crossover_point)
 
-    if poddrevo1 is not None and poddrevo2 is not None:
-        poddrevo1.left, poddrevo2.left = poddrevo2.left, poddrevo1.left
-        poddrevo1.right, poddrevo2.right = poddrevo2.right, poddrevo1.right
-        poddrevo1.value, poddrevo2.value = poddrevo2.value, poddrevo1.value
+        if poddrevo1 is not None and poddrevo2 is not None:
+            poddrevo1.left, poddrevo2.left = poddrevo2.left, poddrevo1.left
+            poddrevo1.right, poddrevo2.right = poddrevo2.right, poddrevo1.right
+            poddrevo1.value, poddrevo2.value = poddrevo2.value, poddrevo1.value
+
+        # Add the offspring to the list
+        offspring.append(treeToArray(poddrevo1, 300)) ###############################################
+        # If there is room for another offspring, add it
+        if len(offspring) < offspring_size[0]:
+            offspring.append(treeToArray(poddrevo2, 300)) ###############################################
+
+    return np.array(offspring) 
 
 
-def mutation(arr, offspring):
-    tree = arrayToTree(arr)
-    mutation_point = random.randint(1, countTree(tree))
-    operatorji = ['+', '-', '*', '/', '^']
-    poddrevo = poddrevo_gen(tree, mutation_point)
-    if poddrevo.value in operatorji:
-        poddrevo.value = operatorji[random.randint(0, len(operatorji))]
-    else:
-        operandi = list(range(-10,10))
-        operandi.extend(['x', '-x'])
-        poddrevo.value = operandi[random.randint(0, len(operandi))]
-    offspring = treeToArray(tree, 100)
+def mutation(offspring, instance):
+    for idx, arr in enumerate(offspring):
+        tree = arrayToTree(arr)
+        tree_count = countTree(tree)
+        if tree_count > 1:
+            mutation_point = random.randint(1, tree_count)
+        else:
+            mutation_point = 1  # or some other default value
+            
+        operators = ['+', '-', '*', '/', '^']
+        subtree = poddrevo_gen(tree, mutation_point)
+        if subtree is not None:
+            if subtree.value in operators:
+                subtree.value = operators[random.randint(0, len(operators) - 1)]
+            else:
+                operands = list(range(-10,10))
+                operands.extend(['x', '-x'])
+                subtree.value = str(operands[random.randint(0, len(operands) - 1)])
+            offspring[idx] = treeToArray(tree, 300) ###############################################
+    return offspring
 
 
 def arrayToTree(array):
@@ -177,9 +228,9 @@ def arrayToTree(array):
         if array[i] == 0:
             prefix.append(str(array[i+1]))
         elif array[i] == 1:
-            prefix.append(operatorji[array[i+1]])
+            prefix.append(operatorji[int(array[i+1])])
         elif array[i] == 2:
-            prefix.append(x[array[i+1]])
+            prefix.append(x[int(array[i+1])])
     return buildTree(prefix)
 
 if __name__ == '__main__':
@@ -189,10 +240,19 @@ if __name__ == '__main__':
 
     kk = arrayToTree(array)
     printTree(kk)
-"""
+
     globina = 4
-    for i in range(10):
-        tree = generateTree(globina)
-        printTree(tree)
-        print("\n")
-        treeToArray(tree, 100)
+    tree = generateTree(globina)
+    printTree(tree)
+    print("\n")
+    arr = treeToArray(tree, 100)
+    print("arr: ", arr)
+    tree1 = arrayToTree(arr)
+    print("tree: ")
+    printTree(tree)
+    print("\ntree1: ")
+    printTree(tree1)
+    """
+
+    buildTree(['^', '*', '-6.0', '-6.0', 'x'])
+    
