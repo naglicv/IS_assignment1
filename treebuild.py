@@ -189,10 +189,10 @@ def crossover(parents, offspring_size, instance):
             poddrevo1.value, poddrevo2.value = poddrevo2.value, poddrevo1.value
 
         # Add the offspring to the list
-        offspring.append(treeToArray(poddrevo1, 300)) ###############################################
+        offspring.append(treeToArray(tree1, 300)) ###############################################
         # If there is room for another offspring, add it
         if len(offspring) < offspring_size[0]:
-            offspring.append(treeToArray(poddrevo2, 300)) ###############################################
+            offspring.append(treeToArray(tree2, 300)) ###############################################
 
     return np.array(offspring) 
 

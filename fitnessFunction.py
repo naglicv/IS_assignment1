@@ -70,7 +70,10 @@ def fitness_func(ga_instance, solution, solution_idx):
 
     # Return the fitness value (the reciprocal of the error)
     #print("mse fit: ", 1.0 / (1 + mse))
-    fitness = 1.0 / (1 + mse)
+    try:
+        fitness = 1.0 / (1 + mse)
+    except:
+        fitnes = 0.000000001
 
     # If the fitness value is complex, return its real part
     if isinstance(fitness, complex) and fitness < 0.1:
@@ -93,15 +96,15 @@ def geneticAlgorithm():
     global population
     
     ga_instance = pygad.GA(num_generations=800,
-                        num_parents_mating=50,
+                        num_parents_mating=100,
                         fitness_func=fitness_func,
-                        sol_per_pop=100,
                         initial_population=population,
+                        parent_selection_type="tournament",
                         gene_type=np.float64,
                         mutation_type=mutation,
                         crossover_type=crossover, 
-                        keep_parents=30,
-                        mutation_probability=0.09)
+                        #keep_parents=15,
+                        mutation_probability=0.08)
                         
 
     ga_instance.run()
@@ -135,7 +138,7 @@ if __name__ == "__main__":
     array_length_true = array_length * 2 ###
     desired_output = ys ###
     globina = 0.2 ###
-    initial_population_size = 100 ###    
+    initial_population_size = 300 ###    
    
     
     #fun_generated_array = treeToArray(fun_generated_tree, array_length)
@@ -146,16 +149,17 @@ if __name__ == "__main__":
     #fitness_func(0, fun_generated_array, 0)
     solution_fitness = 0
     i = 1
-    while solution_fitness < 0.6:
-        print(i)
-        population = generatePopulation()
-        """for i, pop in enumerate(population):
-            print("\npopulation ", i, ": ")
-            printTree(arrayToTree(population[i]))"""
+    #while solution_fitness < 0.6:
+    print(i)
+    population = generatePopulation()
+    """for i, pop in enumerate(population):
+        print("\npopulation ", i, ": ")
+        printTree(arrayToTree(population[i]))"""
 
-            
-        solution_array, solution_fitness, ga_instance = geneticAlgorithm()
-        i += 1
+        
+    solution_array, solution_fitness, ga_instance = geneticAlgorithm()
+    i += 1
+    #
         
     print("\nsolution: ", solution_array)
     solution_tree = arrayToTree(solution_array)
