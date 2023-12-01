@@ -58,23 +58,48 @@ def mse(desired_output, output):
 
 
 def fitness_func(ga_instance, solution, solution_idx):
+    global desired_output, optimal_length
     # Convert the solution array into an expression tree
     solution_tree = arrayToTree(solution)
     #print()
     # Evaluate the tree with the input data
     predicted_output = [evaluateTree(solution_tree, x) for x in xs]
-    desired_output = [evaluateTree(fun_optimal_tree, x) for x in xs]
+    
 
+    # Check for non-numeric values in predicted_output and desired_output
+    if any(isinstance(i, (complex, str)) for i in predicted_output) or any(isinstance(i, (complex, str)) for i in desired_output):
+        return 0
+
+    # Check for invalid values in predicted_output and desired_output
+    if any(pd.isna(predicted_output)) or any(pd.isna(desired_output)):
+        return 0
+
+    # Check for extremely large values in predicted_output and desired_output
+    if any(np.abs(predicted_output) > 1e100) or any(np.abs(desired_output) > 1e100):
+        return 0
+    
     # Calculate the mean squared error
-    mse = np.mean((np.array(predicted_output) - np.array(desired_output))**2)
+    try:
+        mse = np.mean((np.array(predicted_output) - np.array(desired_output))**2)
+    except:
+        print("np.array(predicted_output) - np.array(desired_output)", np.array(predicted_output) - np.array(desired_output))
+        mse = 1000
+        
+    penalty_factor = 0.01
+    diff = solution[1] - optimal_length
+    if diff < 0:
+        diff = 0
+    length_penalty = diff * penalty_factor
 
-    # Return the fitness value (the reciprocal of the error)
-    #print("mse fit: ", 1.0 / (1 + mse))
-    fitness = 1.0 / (1 + mse)
+    # Subtract the penalty from the fitness to get the new fitness
+    try:
+        fitness = 1.0 / (1 + mse + length_penalty)
+    except FloatingPointError:
+        fitness = 0.0
 
     # If the fitness value is complex, return its real part
     if isinstance(fitness, complex) and fitness < 0.1:
-        return 0.000000001
+        return 0
     # Otherwise, return the fitness value as is
     else:
         return fitness
@@ -95,6 +120,7 @@ def geneticAlgorithm():
     ga_instance = pygad.GA(num_generations=800,
                         num_parents_mating=50,
                         fitness_func=fitness_func,
+                        parent_selection_type="tournament",
                         sol_per_pop=100,
                         initial_population=population,
                         gene_type=np.float64,
@@ -121,6 +147,99 @@ def geneticAlgorithm():
     """
     return [solution_array, solution_fitness, ga_instance]
 
+def simplifyTree(node):
+    const_large = str(1000)
+    const_small = str(0.000000001)
+    if node is None:
+        return None
+
+    # Recursively simplify the children
+    node.left = simplifyTree(node.left)
+    node.right = simplifyTree(node.right)
+        
+    if is_float(node.value) or node.value == 'x' or node.value == '-x':
+        return node
+    
+    # If both children are numbers, evaluate the expression
+    if is_float(node.right.value) and is_float(node.left.value):
+        if node.value == '+':
+            try:
+                node.value = str(float(node.left.value) + float(node.right.value))
+            except:
+                node.value = const_large
+        elif node.value == '-':
+            try:
+                node.value = str(float(node.left.value) - float(node.right.value))
+            except:
+                node.value = const_large
+        elif node.value == '*':
+            try:
+                node.value = str(float(node.left.value) * float(node.right.value))
+            except:
+                node.value = const_large
+        elif node.value == '/':
+            try:
+                if float(node.right.value) != 0:  # Avoid division by zero
+                    node.value = str(float(node.left.value) / float(node.right.value))
+                else:
+                    node.value = const_large
+            except:
+                node.value = const_small
+        elif node.value == '^':
+            if float(node.left.value) == 0 and float(node.right.value) != 0:
+                node.value = str(0)
+            elif float(node.left.value) == 0 and float(node.right.value) == 0:
+                node.value = const_large
+            # Check if the values are within a certain range before calculating the power
+            else:
+                try:
+                    node.value = str(pow(float(node.left.value), float(node.right.value)))  # Return a default value
+                except:
+                    node.value = const_large
+                    
+        node.left = None
+        node.right = None
+
+    elif (node.left.value == 'x' and node.right.value == 'x') or (node.left.value == '-x' and node.right.value == '-x'):
+        if node.value == '-':
+            node.value = str(0)
+            node.left = None
+            node.right = None
+        elif node.value == '/':
+            node.value = str(1)
+            node.left = None
+            node.right = None
+            
+    elif (node.left.value == '-x' and node.right == 'x') or (node.left.value == 'x' and node.right.value == '-x'):
+        if node.value == '+':
+            node.value = str(0)
+            node.left = None
+            node.right = None
+        elif node.value == '/':
+            node.value = str(-1)
+            node.left = None
+            node.right = None
+            
+    elif (is_float(node.left.value) and float(node.left.value) == 0 and not is_float(node.right.value)) or \
+        (is_float(node.right.value) and float(node.right.value) == 0 and not is_float(node.left.value)):
+        if node.value in ['+', '-']:
+            node = node.right if is_float(node.right.value) else node.left
+        elif node.value == '^' and is_float(node.right.value):
+            node.value = str(1)
+            node.left = None
+            node.right = None
+            
+    elif (is_float(node.left.value) and float(node.left.value) == 1 and is_float(node.right.value)) or \
+        (is_float(node.right.value) and float(node.right.value) == 1 and is_float(node.left.value)):
+        if node.value == '*':
+            node = node.right if is_float(node.right.value) else node.left
+        elif node.value == '^' and is_float(node.right.value):
+            node = node.left
+
+        
+
+    return node
+    
 if __name__ == "__main__":
     data = pd.read_csv("./datasets/dataset.csv", sep=",")
     equations = data['Equation']
@@ -129,9 +248,10 @@ if __name__ == "__main__":
     ys = data['Ys'][0].strip('][').split(', ')
     ys = np.array(ys)
     fun_optimal_tree = buildTree(infix_to_prefix(equations[0]))
+    
     #fun_generated_tree = buildTree(infix_to_prefix(equations[1]))
         
-    array_length = 300 ###
+    array_length = 500 ###
     array_length_true = array_length * 2 ###
     desired_output = ys ###
     globina = 0.2 ###
@@ -140,33 +260,75 @@ if __name__ == "__main__":
     
     #fun_generated_array = treeToArray(fun_generated_tree, array_length)
     fun_optimal_array = treeToArray(fun_optimal_tree, array_length)
+    optimal_length = fun_optimal_array[1]
+    desired_output = [evaluateTree(fun_optimal_tree, x) for x in xs]
+
 
     #plot(fun_optimal_tree, fun_generated_tree, xs)
     
-    #fitness_func(0, fun_generated_array, 0)
+    """    #fitness_func(0, fun_generated_array, 0)
     solution_fitness = 0
+    solution_array = solution_fitness = ga_instance = 0"""
+    """
     i = 1
     while solution_fitness < 0.6:
         print(i)
         population = generatePopulation()
-        """for i, pop in enumerate(population):
-            print("\npopulation ", i, ": ")
-            printTree(arrayToTree(population[i]))"""
-
-            
-        solution_array, solution_fitness, ga_instance = geneticAlgorithm()
-        i += 1
+        #for i, pop in enumerate(population):
+        #    print("\npopulation ", i, ": ")
+        #    printTree(arrayToTree(population[i]))
         
+        solution_array1, solution_fitness1, ga_instance1 = geneticAlgorithm()
+        if solution_fitness1 > solution_fitness:
+            solution_array = solution_array1
+            solution_fitness = solution_fitness1
+            ga_instance = ga_instance1
+        i += 1
+        if i > 10:
+            break
+    """
+    
+    population = generatePopulation()
+    #for i, pop in enumerate(population):
+    #    print("\npopulation ", i, ": ")
+    #    printTree(arrayToTree(population[i]))
+        
+    solution_array, solution_fitness, ga_instance = geneticAlgorithm()
+    
     print("\nsolution: ", solution_array)
     solution_tree = arrayToTree(solution_array)
     
-    plot(fun_optimal_tree, solution_tree, xs)
     ga_instance.plot_fitness()
+    plot(fun_optimal_tree, solution_tree, xs)
+    
+    
     print("solution fitness: ", solution_fitness)
     print("\nsolution: ")
     printTree(solution_tree)
+    simple = simplifyTree(solution_tree)
+    plot(fun_optimal_tree, simple, xs)
+    print("\nsolution simplified: ")
+    printTree(simple)
     print("\noptimal: ")
     printTree(fun_optimal_tree)
     print("\n")
     
+    """
+    arr = np.array([-1., 38.,  1.,  2.,  1.,  1.,  1.,  2.,  1.,  2.,  2.,  1.,  1.,  1.,  1.,  0.,  2.,  1., \
+  1.,  3.,  0.,  0.,  1.,  2.,  0.,  0.,  1.,  0.,  2.,  1.,  0., 0.,  1.,  3.,  0.,  0., \
+  1.,  2.,  0.,  0.,  1.,  0.,  2.,  1.,  0.,  0.,  2.,  0.,  1.,  2.,  1.,  1.,  2.,  1., \
+  2.,  0.,  1.,  1.,  1.,  2.,  0.,  0.,  0.,  0.,  1.,  1.,  1.,  3.,  2.,  0.,  0.,  0., \
+  0.,  0.,  2.,  0.,  0.,  0.])
+    tree = arrayToTree(arr)
+    print("\noriginal: ")
+    print(treeToArray(tree, 50), "\n")
+    printTree(tree)
+    print("\n")
     
+
+    simple = simplifyTree(tree)
+    print("\nsimple: ")
+    print(treeToArray(simple, 50), "\n")
+    printTree(simple)
+    print("\n")
+    """

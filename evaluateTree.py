@@ -35,19 +35,39 @@ def evaluateTree(root, x):
     print("rightSubtree: ", rightSubtree)
     """ 
     if root.value == '+':
-        return leftSubtree + rightSubtree
-    if root.value == '-':
-        return leftSubtree - rightSubtree
-    if root.value == '*':
-        return leftSubtree * rightSubtree
-    if root.value == '/':
-        return (leftSubtree / rightSubtree) if rightSubtree != 0 else const
-    if root.value == '^':
-        # Check if the values are within a certain range before calculating the power
-        if (abs(leftSubtree) > 100 and abs(rightSubtree) > 3) or abs(rightSubtree) > 10:
-            return 0  # Return a default value
+        # Check for extremely large values in leftSubtree and rightSubtree
+        if abs(leftSubtree) > 10000000 or abs(rightSubtree) > 10000000:
+            return const
         else:
-            return pow(leftSubtree, rightSubtree) if leftSubtree != 0 else 0
+            return leftSubtree + rightSubtree
+    if root.value == '-':
+        try:
+            return leftSubtree - rightSubtree
+        except:
+            return const
+    if root.value == '*':
+        try:
+            return leftSubtree * rightSubtree
+        except OverflowError:
+            return const
+    if root.value == '/':
+        try:
+            return (leftSubtree / rightSubtree) if rightSubtree != 0 else const
+        except:
+            return 0.000001
+    if root.value == '^':
+        if leftSubtree == 0 and rightSubtree != 0:
+            return 0
+        elif leftSubtree == 0 and rightSubtree == 0:
+            return const
+        # Check if the values are within a certain range before calculating the power
+        else:
+            try:
+                """print("leftSubtree: ", leftSubtree)
+                print("rightSubtree: ", rightSubtree)"""
+                return pow(leftSubtree, rightSubtree)  # Return a default value
+            except:
+                return const
     return "Something went wrong"
 
 
