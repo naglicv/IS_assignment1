@@ -103,7 +103,7 @@ def treeToArray(root, array_length):
     arr = np.array(arr)
     
     # List of operators
-    operators = ['+', '-', '*', '/', '^']
+    operators = ['+', '-', '*', '/', '^'] 
     
     # Helper function to recursively traverse the tree
     def traverse(node, index):

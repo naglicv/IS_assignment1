@@ -25,7 +25,7 @@ def evaluateTree(root, x):
     printTree(root.right)
     print("\n\nx: ", x)
     """
-    
+     
     # evaluate subtrees
     leftSubtree = evaluateTree(root.left, x)
     rightSubtree = evaluateTree(root.right, x)

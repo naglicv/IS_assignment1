@@ -49,7 +49,7 @@ def plot(fun_optimal_tree, fun_generated_tree, xs):
     plt.tight_layout()
     ax = plt.gca()
     for label in ax.get_xticklabels():
-        label.set_fontsize(5)
+        label.set_fontsize(5) 
     plt.show()
     
     
