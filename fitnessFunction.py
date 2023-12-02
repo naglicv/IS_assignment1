@@ -64,11 +64,6 @@ def fitness_func(ga_instance, solution, solution_idx):
     #print()
     # Evaluate the tree with the input data
     predicted_output = [evaluateTree(solution_tree, x) for x in xs]
-    
-    #check if solution has any X-es
-    has = False
-    if hasX(solution_tree):
-        has = True
 
     # Check for non-numeric values in predicted_output and desired_output
     if any(isinstance(i, (complex, str)) for i in predicted_output) or any(isinstance(i, (complex, str)) for i in desired_output):
@@ -89,8 +84,6 @@ def fitness_func(ga_instance, solution, solution_idx):
         print("np.array(predicted_output) - np.array(desired_output)", np.array(predicted_output) - np.array(desired_output))
         mse = 1000
     
-    if has == False:
-        mse = 1000
     penalty_factor = 0.002
     diff = solution[1] - optimal_length
     if diff < 0:
@@ -120,8 +113,8 @@ def generatePopulation():
 def geneticAlgorithm():
     global population
 
-    ga_instance = pygad.GA(num_generations=800,
-                        num_parents_mating=100,
+    ga_instance = pygad.GA(num_generations=600,
+                        num_parents_mating=15,
                         fitness_func=fitness_func,
                         initial_population=population,
                         parent_selection_type="tournament",
@@ -249,7 +242,7 @@ if __name__ == "__main__":
     xs = np.array(xs)
     ys = data['Ys'][0].strip('][').split(', ')
     ys = np.array(ys)
-    fun_optimal_tree = buildTree(infix_to_prefix(equations[30]))
+    fun_optimal_tree = buildTree(infix_to_prefix(equations[3]))
     
     #fun_generated_tree = buildTree(infix_to_prefix(equations[1]))
         
@@ -257,7 +250,7 @@ if __name__ == "__main__":
     array_length_true = array_length * 2 ###
     desired_output = ys ###
     globina = 0.2 ###
-    initial_population_size = 150 ###    
+    initial_population_size = 300 ###   
    
     
     #fun_generated_array = treeToArray(fun_generated_tree, array_length)
