@@ -1,4 +1,5 @@
 from treebuild import printTree
+import math
 
 const = 1000
 
@@ -55,6 +56,11 @@ def evaluateTree(root, x):
             return (leftSubtree / rightSubtree) if rightSubtree != 0 else const
         except:
             return 0.000001
+    if root.value == '&':
+        try:
+            return math.log(leftSubtree, rightSubtree)
+        except:
+            return const
     if root.value == '^':
         if leftSubtree == 0 and rightSubtree != 0:
             return 0

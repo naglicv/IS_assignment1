@@ -103,7 +103,7 @@ def treeToArray(root, array_length):
     arr = np.array(arr)
     
     # List of operators
-    operators = ['+', '-', '*', '/', '^'] 
+    operators = ['+', '-', '*', '/', '^', '&'] 
     
     # Helper function to recursively traverse the tree
     def traverse(node, index):
@@ -207,13 +207,13 @@ def mutation(offspring, instance):
         else:
             mutation_point = 1  # or some other default value
             
-        operators = ['+', '-', '*', '/', '^']
+        operators = ['+', '-', '*', '/', '^', '&']
         subtree = poddrevo_gen(tree, mutation_point)
         if subtree is not None:
             if subtree.value in operators:
                 subtree.value = operators[random.randint(0, len(operators) - 1)]
             else:
-                operands = list(range(-10,10))
+                operands = list(range(-20,20))
                 operands.extend(['x', '-x'])
                 subtree.value = str(operands[random.randint(0, len(operands) - 1)])
             offspring[idx] = treeToArray(tree, 500) ###############################################
@@ -223,7 +223,7 @@ def mutation(offspring, instance):
 def arrayToTree(array):
     prefix = []
     dolzina = array[1]
-    operatorji = ['+', '-', '*', '/', '^']
+    operatorji = ['+', '-', '*', '/', '^', '&']
     x = ['x', '-x']
     for i in range(2, 2*int(dolzina), 2):
         if array[i] == 0:

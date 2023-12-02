@@ -117,7 +117,7 @@ def generatePopulation():
 def geneticAlgorithm():
     global population
     
-    ga_instance = pygad.GA(num_generations=800,
+    ga_instance = pygad.GA(num_generations=300,
                         num_parents_mating=50,
                         fitness_func=fitness_func,
                         parent_selection_type="tournament",
