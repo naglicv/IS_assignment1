@@ -5,6 +5,7 @@ import pandas as pd
 from evaluateTree import evaluateTree
 from infixToPrefix import infix_to_prefix
 from treebuild import *
+import time
 
 def plot(fun_optimal_tree, fun_generated_tree, xs):
     
@@ -250,7 +251,7 @@ if __name__ == "__main__":
     array_length_true = array_length * 2 ###
     desired_output = ys ###
     globina = 0.2 ###
-    initial_population_size = 300 ###   
+    initial_population_size = 100 ###   
    
     
     #fun_generated_array = treeToArray(fun_generated_tree, array_length)
@@ -287,8 +288,14 @@ if __name__ == "__main__":
     #for i, pop in enumerate(population):
     #    print("\npopulation ", i, ": ")
     #    printTree(arrayToTree(population[i]))
+
+    before = time.perf_counter()
         
     solution_array, solution_fitness, ga_instance = geneticAlgorithm()
+
+    after = time.perf_counter()
+
+    timeDiff = after - before
     
     print("\nsolution: ", solution_array)
     solution_tree = arrayToTree(solution_array)
@@ -307,6 +314,7 @@ if __name__ == "__main__":
     print("\noptimal: ")
     printTree(fun_optimal_tree)
     print("\n")
+    print(timeDiff)
     
     """
     arr = np.array([-1., 38.,  1.,  2.,  1.,  1.,  1.,  2.,  1.,  2.,  2.,  1.,  1.,  1.,  1.,  0.,  2.,  1., \
