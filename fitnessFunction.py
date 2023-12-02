@@ -2,7 +2,6 @@ from tkinter import Y
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
 from evaluateTree import evaluateTree
 from infixToPrefix import infix_to_prefix
 from treebuild import *
@@ -26,7 +25,7 @@ def plot(fun_optimal_tree, fun_generated_tree, xs):
         else:
             fun_generated_values[i] = val
 
-    fitness = np.square(np.subtract(fun_generated_values,fun_optimal_values))
+    fitness = np.abs(np.subtract(fun_generated_values,fun_optimal_values))
     
     # mean squared error
     mean_sq_error = mse(fun_optimal_values, fun_generated_values)
@@ -61,10 +60,15 @@ def fitness_func(ga_instance, solution, solution_idx):
     global desired_output, optimal_length
     # Convert the solution array into an expression tree
     solution_tree = arrayToTree(solution)
+    
     #print()
     # Evaluate the tree with the input data
     predicted_output = [evaluateTree(solution_tree, x) for x in xs]
     
+    #check if solution has any X-es
+    has = False
+    if hasX(solution_tree):
+        has = True
 
     # Check for non-numeric values in predicted_output and desired_output
     if any(isinstance(i, (complex, str)) for i in predicted_output) or any(isinstance(i, (complex, str)) for i in desired_output):
@@ -80,12 +84,14 @@ def fitness_func(ga_instance, solution, solution_idx):
     
     # Calculate the mean squared error
     try:
-        mse = np.mean((np.array(predicted_output) - np.array(desired_output))**2)
+        mse = np.mean(np.abs(np.array(predicted_output) - np.array(desired_output)))
     except:
         print("np.array(predicted_output) - np.array(desired_output)", np.array(predicted_output) - np.array(desired_output))
         mse = 1000
-        
-    penalty_factor = 0.01
+    
+    if has == False:
+        mse = 1000
+    penalty_factor = 0.002
     diff = solution[1] - optimal_length
     if diff < 0:
         diff = 0
@@ -117,8 +123,8 @@ def generatePopulation():
 def geneticAlgorithm():
     global population
     
-    ga_instance = pygad.GA(num_generations=300,
-                        num_parents_mating=50,
+    ga_instance = pygad.GA(num_generations=500,
+                        num_parents_mating=10,
                         fitness_func=fitness_func,
                         parent_selection_type="tournament",
                         sol_per_pop=100,
@@ -126,7 +132,7 @@ def geneticAlgorithm():
                         gene_type=np.float64,
                         mutation_type=mutation,
                         crossover_type=crossover, 
-                        keep_parents=30,
+                        #keep_parents=30,
                         mutation_probability=0.09)
                         
 
@@ -247,7 +253,7 @@ if __name__ == "__main__":
     xs = np.array(xs)
     ys = data['Ys'][0].strip('][').split(', ')
     ys = np.array(ys)
-    fun_optimal_tree = buildTree(infix_to_prefix(equations[0]))
+    fun_optimal_tree = buildTree(infix_to_prefix(equations[30]))
     
     #fun_generated_tree = buildTree(infix_to_prefix(equations[1]))
         
@@ -255,7 +261,7 @@ if __name__ == "__main__":
     array_length_true = array_length * 2 ###
     desired_output = ys ###
     globina = 0.2 ###
-    initial_population_size = 100 ###    
+    initial_population_size = 150 ###    
    
     
     #fun_generated_array = treeToArray(fun_generated_tree, array_length)
