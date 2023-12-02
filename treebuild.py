@@ -59,15 +59,15 @@ def printTree(root):
 def generateExpression(globina):
     rng = np.random.default_rng()
     operatorji = ['+', '-', '*', '/', '^']
-    operandi = list(range(-10,10))
+    operandi = list(range(-15,15))
     spremenljivka = ['x', '-x']
     rand = rng.random()*10 + (0.2 * globina)
-    if rand <= 5:
+    if rand <= 4.5:
         expression = operatorji[random.randint(0, 4)]
-    elif rand <= 7.5:
+    elif rand <= 7:
         expression = spremenljivka[random.randint(0, 1)]
     else:
-        expression = str(operandi[random.randint(0, 18)])
+        expression = str(operandi[random.randint(0, len(operandi)-1)])
     return expression
 
 
