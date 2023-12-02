@@ -12,6 +12,7 @@ import infixToPrefix as i2p
 
 
 konstanta = 1.e-10
+array_length = 500
 
 #ustvari strukturo node (vozlišče) drevesa
 class Node:
@@ -58,15 +59,15 @@ def printTree(root):
 def generateExpression(globina):
     rng = np.random.default_rng()
     operatorji = ['+', '-', '*', '/', '^']
-    operandi = list(range(-10,10))
+    operandi = list(range(-15,15))
     spremenljivka = ['x', '-x']
     rand = rng.random()*10 + (0.2 * globina)
-    if rand <= 5:
+    if rand <= 4.5:
         expression = operatorji[random.randint(0, 4)]
-    elif rand <= 7.5:
+    elif rand <= 7:
         expression = spremenljivka[random.randint(0, 1)]
     else:
-        expression = str(operandi[random.randint(0, 18)])
+        expression = str(operandi[random.randint(0, len(operandi)-1)])
     return expression
 
 
@@ -102,7 +103,7 @@ def treeToArray(root, array_length):
     arr = np.array(arr)
     
     # List of operators
-    operators = ['+', '-', '*', '/', '^']
+    operators = ['+', '-', '*', '/', '^', '&'] 
     
     # Helper function to recursively traverse the tree
     def traverse(node, index):
@@ -157,11 +158,11 @@ def countTree(root):
 def poddrevo_gen(node, target, index=1):
     if node is None:
         return None
-    if index == target:
+    if index >= target:
         return node
 
-    l_poddrevo = poddrevo_gen(node.left, target, 2 * index)
-    d_poddrevo = poddrevo_gen(node.right, target, 2 * index + 1)
+    l_poddrevo = poddrevo_gen(node.left, target, index+1)
+    d_poddrevo = poddrevo_gen(node.right, target, index + 1 + countTree(node.left))
     return l_poddrevo or d_poddrevo
 
 
@@ -174,14 +175,14 @@ def crossover(parents, offspring_size, instance):
         arr2 = parents[random.randint(0, num_parents-1)]
         tree1 = arrayToTree(arr1)
         tree2 = arrayToTree(arr2)
-        tree_count = min(countTree(tree1), countTree(tree2))
-        if tree_count > 1:
-            crossover_point = random.randint(1, tree_count)
-        else:
-            crossover_point = 1  # or some other default value
+        
+        tree_count1 = countTree(tree1)
+        tree_count2 = countTree(tree2)
+        crossover_point1 = random.randint(1, min(array_length/2-1, tree_count1)) if tree_count1 > 1 else 1
+        crossover_point2 = random.randint(1, min(array_length/2-1, tree_count2)) if tree_count2 > 1 else 1
 
-        poddrevo1 = poddrevo_gen(tree1, crossover_point)
-        poddrevo2 = poddrevo_gen(tree2, crossover_point)
+        poddrevo1 = poddrevo_gen(tree1, crossover_point1)
+        poddrevo2 = poddrevo_gen(tree2, crossover_point2)
 
         if poddrevo1 is not None and poddrevo2 is not None:
             poddrevo1.left, poddrevo2.left = poddrevo2.left, poddrevo1.left
@@ -189,13 +190,12 @@ def crossover(parents, offspring_size, instance):
             poddrevo1.value, poddrevo2.value = poddrevo2.value, poddrevo1.value
 
         # Add the offspring to the list
-        offspring.append(treeToArray(tree1, 300)) ###############################################
+        offspring.append(treeToArray(tree1, array_length)) ###############################################
         # If there is room for another offspring, add it
         if len(offspring) < offspring_size[0]:
-            offspring.append(treeToArray(tree2, 300)) ###############################################
+            offspring.append(treeToArray(tree2, array_length)) ###############################################
 
     return np.array(offspring) 
-
 
 def mutation(offspring, instance):
     for idx, arr in enumerate(offspring):
@@ -206,23 +206,23 @@ def mutation(offspring, instance):
         else:
             mutation_point = 1  # or some other default value
             
-        operators = ['+', '-', '*', '/', '^']
+        operators = ['+', '-', '*', '/', '^', '&']
         subtree = poddrevo_gen(tree, mutation_point)
         if subtree is not None:
             if subtree.value in operators:
                 subtree.value = operators[random.randint(0, len(operators) - 1)]
             else:
-                operands = list(range(-10,10))
+                operands = list(range(-20,20))
                 operands.extend(['x', '-x'])
                 subtree.value = str(operands[random.randint(0, len(operands) - 1)])
-            offspring[idx] = treeToArray(tree, 300) ###############################################
+            offspring[idx] = treeToArray(tree, 500) ###############################################
     return offspring
 
 
 def arrayToTree(array):
     prefix = []
     dolzina = array[1]
-    operatorji = ['+', '-', '*', '/', '^']
+    operatorji = ['+', '-', '*', '/', '^', '&']
     x = ['x', '-x']
     for i in range(2, 2*int(dolzina), 2):
         if array[i] == 0:

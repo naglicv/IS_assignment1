@@ -1,4 +1,5 @@
 from treebuild import printTree
+import math
 
 const = 10000
 
@@ -25,7 +26,7 @@ def evaluateTree(root, x):
     printTree(root.right)
     print("\n\nx: ", x)
     """
-    
+     
     # evaluate subtrees
     leftSubtree = evaluateTree(root.left, x)
     rightSubtree = evaluateTree(root.right, x)
@@ -35,21 +36,41 @@ def evaluateTree(root, x):
     print("rightSubtree: ", rightSubtree)
     """ 
     if root.value == '+':
-        return leftSubtree + rightSubtree
+        # Check for extremely large values in leftSubtree and rightSubtree
+        if abs(leftSubtree) > 10000000 or abs(rightSubtree) > 10000000:
+            return const
+        else:
+            return leftSubtree + rightSubtree
     if root.value == '-':
-        return leftSubtree - rightSubtree
+        try:
+            return leftSubtree - rightSubtree
+        except:
+            return const
     if root.value == '*':
-        return leftSubtree * rightSubtree
+        try:
+            return leftSubtree * rightSubtree
+        except OverflowError:
+            return const
     if root.value == '/':
-        return (leftSubtree / rightSubtree) if rightSubtree != 0 else const
+        try:
+            return (leftSubtree / rightSubtree) if rightSubtree != 0 else const
+        except:
+            return 0.000001
+    if root.value == '&':
+        try:
+            return math.log(leftSubtree, rightSubtree)
+        except:
+            return const
     if root.value == '^':
-        # Check if the values are within a certain range before calculating the power
-        if (abs(leftSubtree) > 100 and abs(rightSubtree) > 3) or abs(rightSubtree) > 10:
-            #print(leftSubtree, rightSubtree)
-            return 0  # Return a default value
+        if leftSubtree == 0 and rightSubtree != 0:
+            return 0
+        elif leftSubtree == 0 and rightSubtree == 0:
+            return const
         else:
             try:
-                return pow(leftSubtree, rightSubtree) if leftSubtree != 0 else 0
+                """print("leftSubtree: ", leftSubtree)
+                print("rightSubtree: ", rightSubtree)"""
+                return pow(leftSubtree, rightSubtree)
             except:
                 return const
     return "Something went wrong"
