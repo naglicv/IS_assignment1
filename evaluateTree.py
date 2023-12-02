@@ -1,7 +1,7 @@
 from treebuild import printTree
 import math
 
-const = 1000
+const = 10000
 
 def evaluateTree(root, x):
     # Empty tree
@@ -66,12 +66,11 @@ def evaluateTree(root, x):
             return 0
         elif leftSubtree == 0 and rightSubtree == 0:
             return const
-        # Check if the values are within a certain range before calculating the power
         else:
             try:
                 """print("leftSubtree: ", leftSubtree)
                 print("rightSubtree: ", rightSubtree)"""
-                return pow(leftSubtree, rightSubtree)  # Return a default value
+                return pow(leftSubtree, rightSubtree)
             except:
                 return const
     return "Something went wrong"
