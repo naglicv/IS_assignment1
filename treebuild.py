@@ -197,7 +197,6 @@ def crossover(parents, offspring_size, instance):
 
     return np.array(offspring) 
 
-
 def mutation(offspring, instance):
     for idx, arr in enumerate(offspring):
         tree = arrayToTree(arr)

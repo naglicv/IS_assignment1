@@ -91,16 +91,13 @@ def fitness_func(ga_instance, solution, solution_idx):
         diff = 0
     length_penalty = diff * penalty_factor
 
-    # Subtract the penalty from the fitness to get the new fitness
     try:
         fitness = 1.0 / (1 + mse + length_penalty)
     except FloatingPointError:
         fitness = 0.0
 
-    # If the fitness value is complex, return its real part
     if isinstance(fitness, complex) and fitness < 0.1:
         return 0
-    # Otherwise, return the fitness value as is
     else:
         return fitness
 
@@ -116,18 +113,17 @@ def generatePopulation():
     
 def geneticAlgorithm():
     global population
-    
-    ga_instance = pygad.GA(num_generations=300,
-                        num_parents_mating=50,
+
+    ga_instance = pygad.GA(num_generations=800,
+                        num_parents_mating=100,
                         fitness_func=fitness_func,
-                        parent_selection_type="tournament",
-                        sol_per_pop=100,
                         initial_population=population,
+                        parent_selection_type="tournament",
                         gene_type=np.float64,
                         mutation_type=mutation,
                         crossover_type=crossover, 
-                        keep_parents=30,
-                        mutation_probability=0.09)
+                        #keep_parents=15,
+                        mutation_probability=0.08)
                         
 
     ga_instance.run()
@@ -255,7 +251,7 @@ if __name__ == "__main__":
     array_length_true = array_length * 2 ###
     desired_output = ys ###
     globina = 0.2 ###
-    initial_population_size = 100 ###    
+    initial_population_size = 300 ###    
    
     
     #fun_generated_array = treeToArray(fun_generated_tree, array_length)
