@@ -9,6 +9,7 @@ import re
 import random
 import evaluateTree as eval
 import infixToPrefix as i2p
+#from fitnessFunction import simplifyTree
 
 
 konstanta = 1.e-10
@@ -101,6 +102,7 @@ def treeToArray(root, array_length):
     # Initialize the array with [0, 0]
     arr = [[0, 0] for _ in range(array_length)]
     arr = np.array(arr)
+    #root = simplifyTree(root)
     
     # List of operators
     operators = ['+', '-', '*', '/', '^', '&'] 
@@ -131,6 +133,7 @@ def treeToArray(root, array_length):
         return index
     
     # Count the number of nodes and store it in the first element
+    
     num_nodes = traverse(root, 1)
     arr[0] = [-1, num_nodes+1]
     
@@ -213,7 +216,7 @@ def mutation(offspring, instance):
             if subtree.value in operators:
                 subtree.value = operators[random.randint(0, len(operators) - 1)]
             else:
-                operands = list(range(-20,20))
+                operands = list(range(-15,15))
                 operands.extend(['x', '-x'])
                 subtree.value = str(operands[random.randint(0, len(operands) - 1)])
             offspring[idx] = treeToArray(tree, 500) ###############################################
@@ -233,6 +236,16 @@ def arrayToTree(array):
         elif array[i] == 2:
             prefix.append(x[int(array[i+1])])
     return buildTree(prefix)
+
+def hasX(root):
+    has = False
+    if (root != None):
+        if root.value == 'x' or root.value == '-x':
+            has = True
+        return has or hasX(root.left) or hasX(root.right)
+    return False
+    
+
 
 if __name__ == '__main__':
     """#drevo = generateTree(0)
@@ -255,5 +268,6 @@ if __name__ == '__main__':
     printTree(tree1)
     """
 
-    buildTree(['^', '*', '-6.0', '-6.0', 'x'])
+    tree = buildTree(['^', '*', '-6.0', '-6.0', '-x'])
+    print(hasX(tree))
     
