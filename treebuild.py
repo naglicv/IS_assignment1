@@ -234,16 +234,7 @@ def arrayToTree(array):
             prefix.append(operatorji[int(array[i+1])])
         elif array[i] == 2:
             prefix.append(x[int(array[i+1])])
-    return buildTree(prefix)
-
-def hasX(root):
-    has = False
-    if (root != None):
-        if root.value == 'x' or root.value == '-x':
-            has = True
-        return has or hasX(root.left) or hasX(root.right)
-    return False
-    
+    return buildTree(prefix)    
 
 
 if __name__ == '__main__':
