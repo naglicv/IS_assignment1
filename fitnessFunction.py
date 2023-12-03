@@ -26,7 +26,7 @@ def plot(fun_optimal_tree, fun_generated_tree, xs):
         else:
             fun_generated_values[i] = val
 
-    fitness = np.abs(np.subtract(fun_generated_values,fun_optimal_values))
+    fitness = np.square(np.subtract(fun_generated_values,fun_optimal_values))
     
     # mean squared error
     mean_sq_error = mse(fun_optimal_values, fun_generated_values)
@@ -80,12 +80,12 @@ def fitness_func(ga_instance, solution, solution_idx):
     
     # Calculate the mean squared error
     try:
-        mse = np.mean(np.abs(np.array(predicted_output) - np.array(desired_output)))
+        mse = np.mean((np.array(predicted_output) - np.array(desired_output))**2)
     except:
         print("np.array(predicted_output) - np.array(desired_output)", np.array(predicted_output) - np.array(desired_output))
         mse = 1000
     
-    penalty_factor = 0.002
+    penalty_factor = 0.005
     diff = solution[1] - optimal_length
     if diff < 0:
         diff = 0
@@ -114,7 +114,7 @@ def generatePopulation():
 def geneticAlgorithm():
     global population
 
-    ga_instance = pygad.GA(num_generations=600,
+    ga_instance = pygad.GA(num_generations=100,
                         num_parents_mating=15,
                         fitness_func=fitness_func,
                         initial_population=population,
@@ -243,11 +243,11 @@ if __name__ == "__main__":
     xs = np.array(xs)
     ys = data['Ys'][0].strip('][').split(', ')
     ys = np.array(ys)
-    fun_optimal_tree = buildTree(infix_to_prefix(equations[3]))
+    fun_optimal_tree = buildTree(infix_to_prefix(equations[47]))
     
     #fun_generated_tree = buildTree(infix_to_prefix(equations[1]))
         
-    array_length = 500 ###
+    array_length = 800 ###
     array_length_true = array_length * 2 ###
     desired_output = ys ###
     globina = 0.2 ###

@@ -13,7 +13,7 @@ import infixToPrefix as i2p
 
 
 konstanta = 1.e-10
-array_length = 500
+array_length = 800
 
 #ustvari strukturo node (vozlišče) drevesa
 class Node:
@@ -60,11 +60,11 @@ def printTree(root):
 def generateExpression(globina):
     rng = np.random.default_rng()
     operatorji = ['+', '-', '*', '/', '^']
-    operandi = list(range(-15,15))
+    operandi = list(range(-10,10))
     spremenljivka = ['x', '-x']
     rand = rng.random()*10 + (0.2 * globina)
     if rand <= 4.5:
-        expression = operatorji[random.randint(0, 4)]
+        expression = operatorji[random.randint(0, len(operatorji)-1)]
     elif rand <= 7:
         expression = spremenljivka[random.randint(0, 1)]
     else:
@@ -105,7 +105,7 @@ def treeToArray(root, array_length):
     #root = simplifyTree(root)
     
     # List of operators
-    operators = ['+', '-', '*', '/', '^', '&'] 
+    operators = ['+', '-', '*', '/', '^'] 
     
     # Helper function to recursively traverse the tree
     def traverse(node, index):
@@ -134,7 +134,10 @@ def treeToArray(root, array_length):
     
     # Count the number of nodes and store it in the first element
     
-    num_nodes = traverse(root, 1)
+    try:
+        num_nodes = traverse(root, 1)
+    except:
+        num_nodes = 0
     arr[0] = [-1, num_nodes+1]
     
     arr = arr.flatten()
@@ -209,23 +212,23 @@ def mutation(offspring, instance):
         else:
             mutation_point = 1  # or some other default value
             
-        operators = ['+', '-', '*', '/', '^', '&']
+        operators = ['+', '-', '*', '/', '^']
         subtree = poddrevo_gen(tree, mutation_point)
         if subtree is not None:
             if subtree.value in operators:
                 subtree.value = operators[random.randint(0, len(operators) - 1)]
             else:
-                operands = list(range(-15,15))
+                operands = list(range(-10,10))
                 operands.extend(['x', '-x'])
                 subtree.value = str(operands[random.randint(0, len(operands) - 1)])
-            offspring[idx] = treeToArray(tree, 500) ###############################################
+            offspring[idx] = treeToArray(tree, array_length) ###############################################
     return offspring
 
 
 def arrayToTree(array):
     prefix = []
     dolzina = array[1]
-    operatorji = ['+', '-', '*', '/', '^', '&']
+    operatorji = ['+', '-', '*', '/', '^']
     x = ['x', '-x']
     for i in range(2, 2*int(dolzina), 2):
         if array[i] == 0:

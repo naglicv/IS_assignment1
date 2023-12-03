@@ -1,7 +1,7 @@
 from treebuild import printTree
 import math
 
-const = 10000
+const = 1000000
 
 def evaluateTree(root, x):
     # Empty tree
