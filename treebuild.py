@@ -131,6 +131,7 @@ def treeToArray(root, array_length):
         num_nodes = traverse(root, 1)
     except:
         print("kekec")
+        arr = [[0, 0] for _ in range(array_length)]
         num_nodes = -1
     arr[0] = [-1, num_nodes+1]
     

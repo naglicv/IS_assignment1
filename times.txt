@@ -1,0 +1,11 @@
+eq[3] = 7.0624
+eq[19] = 8.5285
+eq[50] = 10.4429
+
+te tri zgoraj so une iz poročila
+
+eq[0] = 8.8088
+eq[70] = 12.4536
+eq[80] = 14.7802
+
+če misliš, da bi jih rabli še več, povej
