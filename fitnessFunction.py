@@ -63,7 +63,6 @@ def fitness_func(ga_instance, solution, solution_idx):
     # Convert the solution array into an expression tree
     solution_tree = arrayToTree(solution)
     
-    #print()
     # Evaluate the tree with the input data
     predicted_output = [evaluateTree(solution_tree, x) for x in xs]
 
@@ -119,8 +118,8 @@ def genind(instance):
 def geneticAlgorithm():
     global population
 
-    ga_instance = pygad.GA(num_generations=600,
-                        num_parents_mating=50,
+    ga_instance = pygad.GA(num_generations=100,
+                        num_parents_mating=15,
                         fitness_func=fitness_func,
                         initial_population=population,
                         on_generation=genind,
@@ -135,18 +134,6 @@ def geneticAlgorithm():
     ga_instance.run()
     
     solution_array, solution_fitness, solution_idx = ga_instance.best_solution()
-    """print("\nsolution: ", solution_array)
-    solution_tree = arrayToTree(solution_array)
-    
-    plot(fun_optimal_tree, solution_tree, xs)
-    ga_instance.plot_fitness()
-    print("solution fitness: ", solution_fitness)
-    print("\nsolution: ")
-    printTree(solution_tree)
-    print("\noptimal: ")
-    printTree(fun_optimal_tree)
-    print("\n")
-    """
     return [solution_array, solution_fitness, ga_instance]
 
 def simplifyTree(node):
@@ -249,9 +236,7 @@ if __name__ == "__main__":
     xs = np.array(xs)
     ys = data['Ys'][0].strip('][').split(', ')
     ys = np.array(ys)
-    fun_optimal_tree = buildTree(infix_to_prefix(equations[52]))
-    
-    #fun_generated_tree = buildTree(infix_to_prefix(equations[1]))
+    fun_optimal_tree = buildTree(infix_to_prefix(equations[3]))
         
     array_length = 600 ###
     array_length_true = array_length * 2 ###
@@ -259,41 +244,13 @@ if __name__ == "__main__":
     globina = 0.2 ###
     initial_population_size = 100 ###   
    
-    
-    #fun_generated_array = treeToArray(fun_generated_tree, array_length)
     fun_optimal_array = treeToArray(fun_optimal_tree, array_length)
     optimal_length = fun_optimal_array[1]
     desired_output = [evaluateTree(fun_optimal_tree, x) for x in xs]
 
-
-    #plot(fun_optimal_tree, fun_generated_tree, xs)
-    
-    """    #fitness_func(0, fun_generated_array, 0)
-    solution_fitness = 0
-    solution_array = solution_fitness = ga_instance = 0"""
-    """
-    i = 1
-    while solution_fitness < 0.6:
-        print(i)
-        population = generatePopulation()
-        #for i, pop in enumerate(population):
-        #    print("\npopulation ", i, ": ")
-        #    printTree(arrayToTree(population[i]))
-        
-        solution_array1, solution_fitness1, ga_instance1 = geneticAlgorithm()
-        if solution_fitness1 > solution_fitness:
-            solution_array = solution_array1
-            solution_fitness = solution_fitness1
-            ga_instance = ga_instance1
-        i += 1
-        if i > 10:
-            break
-    """
+    #števec iteracije algoritma
     iii = 0
     population = generatePopulation()
-    #for i, pop in enumerate(population):
-    #    print("\npopulation ", i, ": ")
-    #    printTree(arrayToTree(population[i]))
 
     before = time.perf_counter()
         
@@ -321,23 +278,3 @@ if __name__ == "__main__":
     printTree(fun_optimal_tree)
     print("\n")
     print(timeDiff)
-    
-    """
-    arr = np.array([-1., 38.,  1.,  2.,  1.,  1.,  1.,  2.,  1.,  2.,  2.,  1.,  1.,  1.,  1.,  0.,  2.,  1., \
-  1.,  3.,  0.,  0.,  1.,  2.,  0.,  0.,  1.,  0.,  2.,  1.,  0., 0.,  1.,  3.,  0.,  0., \
-  1.,  2.,  0.,  0.,  1.,  0.,  2.,  1.,  0.,  0.,  2.,  0.,  1.,  2.,  1.,  1.,  2.,  1., \
-  2.,  0.,  1.,  1.,  1.,  2.,  0.,  0.,  0.,  0.,  1.,  1.,  1.,  3.,  2.,  0.,  0.,  0., \
-  0.,  0.,  2.,  0.,  0.,  0.])
-    tree = arrayToTree(arr)
-    print("\noriginal: ")
-    print(treeToArray(tree, 50), "\n")
-    printTree(tree)
-    print("\n")
-    
-
-    simple = simplifyTree(tree)
-    print("\nsimple: ")
-    print(treeToArray(simple, 50), "\n")
-    printTree(simple)
-    print("\n")
-    """

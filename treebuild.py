@@ -65,16 +65,6 @@ def generateExpression(globina):
     return expression
 
 
-#generiraj random drevo
-"""def generateTree(globina):
-    expression = generateExpression(globina)
-    root = Node(expression)
-    if root.value.lstrip('-+').isnumeric() or root.value.lstrip('-+').isalpha():
-        return root
-    root.left = generateTree(globina+1)
-    root.right = generateTree(globina+1)
-    return root"""
-
 def generateTree(globina, is_root=True):
     expression = generateExpression(globina)
     # If the expression is empty and this is the root of the tree, create a node with a value of 0
@@ -95,7 +85,6 @@ def treeToArray(root, array_length):
     # Initialize the array with [0, 0]
     arr = [[0, 0] for _ in range(array_length)]
     arr = np.array(arr)
-    #root = simplifyTree(root)
     
     # List of operators
     operators = ['+', '-', '*', '/', '^', '&'] 
@@ -130,13 +119,11 @@ def treeToArray(root, array_length):
     try:
         num_nodes = traverse(root, 1)
     except:
-        print("kekec")
         arr = [[0, 0] for _ in range(array_length)]
         num_nodes = -1
     arr[0] = [-1, num_nodes+1]
     
     arr = arr.flatten()
-    #print(arr)
     return arr
 
 def isOperator(op):
@@ -176,14 +163,6 @@ def crossover(parents, offspring_size, instance):
         arr2 = parents[random.randint(0, num_parents-1)]
         tree1 = arrayToTree(arr1)
         tree2 = arrayToTree(arr2)
-        '''
-        tree_count1 = countTree(tree1)
-        tree_count2 = countTree(tree2)
-        crossover_point1 = random.randint(1, min(array_length/2-1, tree_count1)) if tree_count1 > 1 else 1
-        crossover_point2 = random.randint(1, min(array_length/2-1, tree_count2)) if tree_count2 > 1 else 1
-
-        poddrevo1 = poddrevo_gen(tree1, crossover_point1)
-        poddrevo2 = poddrevo_gen(tree2, crossover_point2)'''
 
         crossover_point = random.randint(1, min(countTree(tree1), countTree(tree2)))
         poddrevo1 = poddrevo_gen(tree1, crossover_point)
@@ -195,10 +174,10 @@ def crossover(parents, offspring_size, instance):
             poddrevo1.value, poddrevo2.value = poddrevo2.value, poddrevo1.value
 
         # Add the offspring to the list
-        offspring.append(treeToArray(tree1, array_length)) ###############################################
+        offspring.append(treeToArray(tree1, array_length))
         # If there is room for another offspring, add it
         if len(offspring) < offspring_size[0]:
-            offspring.append(treeToArray(tree2, array_length)) ###############################################
+            offspring.append(treeToArray(tree2, array_length))
 
     return np.array(offspring) 
 
@@ -220,7 +199,7 @@ def mutation(offspring, instance):
                 operands = list(range(-10,10))
                 operands.extend(['x', '-x'])
                 subtree.value = str(operands[random.randint(0, len(operands) - 1)])
-            offspring[idx] = treeToArray(tree, array_length) ###############################################
+            offspring[idx] = treeToArray(tree, array_length)
     return offspring
 
 

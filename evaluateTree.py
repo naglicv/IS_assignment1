@@ -14,27 +14,11 @@ def evaluateTree(root, x):
             return float(-float(x))
         else:
             return float(root.value)
-    
-    """
-    print("------------------------------------------\nROOT:")
-    printTree(root)
-    
-    print("\n\nroot.left:")
-    printTree(root.left)
-    print("\n\nx: ", x)
-    print("root.right:")
-    printTree(root.right)
-    print("\n\nx: ", x)
-    """
      
     # evaluate subtrees
     leftSubtree = evaluateTree(root.left, x)
     rightSubtree = evaluateTree(root.right, x)
     
-    """
-    print("\n\nleftSubtree: ", leftSubtree)
-    print("rightSubtree: ", rightSubtree)
-    """ 
     if root.value == '+':
         # Check for extremely large values in leftSubtree and rightSubtree
         if abs(leftSubtree) > 10000000 or abs(rightSubtree) > 10000000:
@@ -68,8 +52,6 @@ def evaluateTree(root, x):
             return const
         else:
             try:
-                """print("leftSubtree: ", leftSubtree)
-                print("rightSubtree: ", rightSubtree)"""
                 return pow(leftSubtree, rightSubtree)
             except:
                 return const
