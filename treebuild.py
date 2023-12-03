@@ -1,11 +1,5 @@
-import pygad
 import numpy as np
-from scipy.stats import norm
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
 import infixToPrefix as itp
-import re
 import random
 import evaluateTree as eval
 import infixToPrefix as i2p
@@ -13,7 +7,7 @@ import infixToPrefix as i2p
 
 
 konstanta = 1.e-10
-array_length = 800
+array_length = 600
 
 #ustvari strukturo node (vozlišče) drevesa
 class Node:
@@ -47,13 +41,12 @@ def is_float(string):
 
 #izpis drevesa
 def printTree(root):
-    string = ""
     if (root != None):
         string = root.value
-        print(root.value, end = "")
-        string += printTree(root.left)
-        string += printTree(root.right)
-    return string
+        print(root.value, end = " ")
+        printTree(root.left)
+        printTree(root.right)
+    #return string
 
 
 #generiraj random expression (tree value)
@@ -63,9 +56,9 @@ def generateExpression(globina):
     operandi = list(range(-10,10))
     spremenljivka = ['x', '-x']
     rand = rng.random()*10 + (0.2 * globina)
-    if rand <= 4.5:
+    if rand <= 4.75:
         expression = operatorji[random.randint(0, len(operatorji)-1)]
-    elif rand <= 7:
+    elif rand <= 8:
         expression = spremenljivka[random.randint(0, 1)]
     else:
         expression = str(operandi[random.randint(0, len(operandi)-1)])
@@ -105,7 +98,7 @@ def treeToArray(root, array_length):
     #root = simplifyTree(root)
     
     # List of operators
-    operators = ['+', '-', '*', '/', '^'] 
+    operators = ['+', '-', '*', '/', '^', '&'] 
     
     # Helper function to recursively traverse the tree
     def traverse(node, index):
@@ -137,7 +130,8 @@ def treeToArray(root, array_length):
     try:
         num_nodes = traverse(root, 1)
     except:
-        num_nodes = 0
+        print("kekec")
+        num_nodes = -1
     arr[0] = [-1, num_nodes+1]
     
     arr = arr.flatten()
@@ -146,7 +140,7 @@ def treeToArray(root, array_length):
 
 def isOperator(op):
     # Returns true if the operator is an operator
-    if op in ['+', '-', '*', '/', '^']:
+    if op in ['+', '-', '*', '/', '^', '&']:
         return 1
     else:
         return 0
@@ -181,14 +175,18 @@ def crossover(parents, offspring_size, instance):
         arr2 = parents[random.randint(0, num_parents-1)]
         tree1 = arrayToTree(arr1)
         tree2 = arrayToTree(arr2)
-        
+        '''
         tree_count1 = countTree(tree1)
         tree_count2 = countTree(tree2)
         crossover_point1 = random.randint(1, min(array_length/2-1, tree_count1)) if tree_count1 > 1 else 1
         crossover_point2 = random.randint(1, min(array_length/2-1, tree_count2)) if tree_count2 > 1 else 1
 
         poddrevo1 = poddrevo_gen(tree1, crossover_point1)
-        poddrevo2 = poddrevo_gen(tree2, crossover_point2)
+        poddrevo2 = poddrevo_gen(tree2, crossover_point2)'''
+
+        crossover_point = random.randint(1, min(countTree(tree1), countTree(tree2)))
+        poddrevo1 = poddrevo_gen(tree1, crossover_point)
+        poddrevo2 = poddrevo_gen(tree2, crossover_point)
 
         if poddrevo1 is not None and poddrevo2 is not None:
             poddrevo1.left, poddrevo2.left = poddrevo2.left, poddrevo1.left
@@ -212,7 +210,7 @@ def mutation(offspring, instance):
         else:
             mutation_point = 1  # or some other default value
             
-        operators = ['+', '-', '*', '/', '^']
+        operators = ['+', '-', '*', '/', '^', '&']
         subtree = poddrevo_gen(tree, mutation_point)
         if subtree is not None:
             if subtree.value in operators:
@@ -228,7 +226,7 @@ def mutation(offspring, instance):
 def arrayToTree(array):
     prefix = []
     dolzina = array[1]
-    operatorji = ['+', '-', '*', '/', '^']
+    operatorji = ['+', '-', '*', '/', '^', '&']
     x = ['x', '-x']
     for i in range(2, 2*int(dolzina), 2):
         if array[i] == 0:
@@ -241,26 +239,9 @@ def arrayToTree(array):
 
 
 if __name__ == '__main__':
-    """#drevo = generateTree(0)
-    #bbb = printTree(drevo)
-    array = [[-1,4],[1,2],[2,1],[0,5]]
 
-    kk = arrayToTree(array)
-    printTree(kk)
-
-    globina = 4
-    tree = generateTree(globina)
-    printTree(tree)
-    print("\n")
-    arr = treeToArray(tree, 100)
-    print("arr: ", arr)
-    tree1 = arrayToTree(arr)
-    print("tree: ")
-    printTree(tree)
-    print("\ntree1: ")
-    printTree(tree1)
-    """
-
-    tree = buildTree(['^', '*', '-6.0', '-6.0', '-x'])
-    print(hasX(tree))
+    expression = ['+', '/', 0, '^', '^', '-x', 9, '-x', 'x']
+    drevo = buildTree(expression)
+    #printTree(drevo)
+    print(eval.evaluateTree(drevo, 1))
     

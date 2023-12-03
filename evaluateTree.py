@@ -58,9 +58,9 @@ def evaluateTree(root, x):
             return 0.000001
     if root.value == '&':
         try:
-            return math.log(leftSubtree, rightSubtree)
+            return math.log(rightSubtree, leftSubtree)
         except:
-            return const
+            return 0
     if root.value == '^':
         if leftSubtree == 0 and rightSubtree != 0:
             return 0

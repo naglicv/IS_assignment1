@@ -6,6 +6,7 @@ from evaluateTree import evaluateTree
 from infixToPrefix import infix_to_prefix
 from treebuild import *
 import time
+import pygad
 
 def plot(fun_optimal_tree, fun_generated_tree, xs):
     
@@ -110,14 +111,19 @@ def generatePopulation():
     
     return population
 
+def genind(instance):
+    global iii
+    print(iii)
+    iii += 1
     
 def geneticAlgorithm():
     global population
 
-    ga_instance = pygad.GA(num_generations=100,
-                        num_parents_mating=15,
+    ga_instance = pygad.GA(num_generations=600,
+                        num_parents_mating=50,
                         fitness_func=fitness_func,
                         initial_population=population,
+                        on_generation=genind,
                         parent_selection_type="tournament",
                         gene_type=np.float64,
                         mutation_type=mutation,
@@ -243,11 +249,11 @@ if __name__ == "__main__":
     xs = np.array(xs)
     ys = data['Ys'][0].strip('][').split(', ')
     ys = np.array(ys)
-    fun_optimal_tree = buildTree(infix_to_prefix(equations[47]))
+    fun_optimal_tree = buildTree(infix_to_prefix(equations[52]))
     
     #fun_generated_tree = buildTree(infix_to_prefix(equations[1]))
         
-    array_length = 800 ###
+    array_length = 600 ###
     array_length_true = array_length * 2 ###
     desired_output = ys ###
     globina = 0.2 ###
@@ -283,7 +289,7 @@ if __name__ == "__main__":
         if i > 10:
             break
     """
-    
+    iii = 0
     population = generatePopulation()
     #for i, pop in enumerate(population):
     #    print("\npopulation ", i, ": ")
